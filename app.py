@@ -16,7 +16,6 @@ def display_image_from_url(url, input_image):
         image = Image.open(res)
         image.load()
 
-
     if input_image is not None:
         image = input_image
 
@@ -26,27 +25,21 @@ def display_image_from_url(url, input_image):
 
     return image, parameters, image.info
 
-blocks = gr.Blocks(css="#out_image {height: 400px}")
-with blocks as png_info:
-    with gr.Row():
-        gr.Markdown(
-    """
-    Report any issues on the [GitHub](https://github.com/andzhik/png-params) page of this project
-    """)
-    with gr.Row().style(equal_height=False):
-        with gr.Column():
-            in_url = gr.Textbox(label="Source URL")
-            in_image = gr.Image(label="Source Image", type='pil')
-            with gr.Row():
-                btn_submit = gr.Button("Submit", variant="primary")
+# Define the interface
+iface = gr.Interface(
+    fn=display_image_from_url,
+    inputs=[
+        gr.Textbox(label="Source URL"),
+        gr.Image(label="Source Image", type='pil')
+    ],
+    outputs=[
+        gr.Image(type='pil', label="Output Image"),
+        gr.Textbox(label="Generation Parameters"),
+        gr.Textbox(label="Metadata")
+    ],
+    title="Image Display from URL",
+    description="Enter a URL or upload an image to display its parameters and metadata."
+)
 
-        with gr.Column():
-            out_image = gr.Image(type='pil', elem_id="out_image")
-            out_info = gr.Textbox(label="Generation Parameters")
-            out_meta = gr.Textbox(label="Metadata")
-    
-    btn_submit.click(fn=display_image_from_url,
-    inputs=[in_url, in_image],
-    outputs=[out_image, out_info, out_meta])
-            
-png_info.launch()
+# Launch the interface
+iface.launch()
